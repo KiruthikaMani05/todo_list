@@ -8,16 +8,16 @@ function Greeting() {
     const currentHour = new Date().getHours();
     if (currentHour >= 5 && currentHour < 12) {
       setTimeOfDay("Morning");
-      setImageUrl("/img/morning.jpg");
+      setImageUrl("/img/holding-a-paper-cup.jpg");
     } else if (currentHour >= 12 && currentHour < 18) {
       setTimeOfDay("Afternoon");
-      setImageUrl("/img/afternoon.jpg");
+      setImageUrl("/img/holding-a-paper-cup.jpg");
     } else if (currentHour >= 18 && currentHour < 22) {
       setTimeOfDay("Evening");
-      setImageUrl("/img/evening.jpg");
+      setImageUrl("/img/holding-a-paper-cup.jpg");
     } else {
       setTimeOfDay("Night");
-      setImageUrl("/img/night.jpg");
+      setImageUrl("/img/sleeping-dog.jpg");
     }
   }, []);
 
@@ -25,17 +25,7 @@ function Greeting() {
     <div className="text-animations">
       <div>
         {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={timeOfDay}
-            style={{
-              width: "23%",
-              borderRadius: "100%",
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          />
+          <img className="greeting-img" src={imageUrl} alt={timeOfDay} />
         )}
       </div>
       <div class="waveTextAnimated">

@@ -3,14 +3,17 @@ import Greeting from "./Greeting";
 import { Table } from "react-bootstrap";
 import PopupWindow from "./PopupWindow";
 import { icons } from "./Icon_pkg";
-import { FcEmptyTrash } from "react-icons/fc";
+import { FcEmptyTrash, FcInspection } from "react-icons/fc";
 import createNotification from "./reactNotification";
+import moment from "moment/moment";
+import Dictaphone from "./Dictaphone";
 
 function TodoList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectIcon, setselectIcon] = useState(null);
   const [enterTask, setenterTaskName] = useState("");
   const [filter, setFilter] = useState("All"); // initialize filter state to "All"
+
   const [taskList, setTaskList] = useState(
     // Load the task list from the local storage when the component is mounted
     JSON.parse(localStorage.getItem("taskList")) || []
@@ -22,19 +25,19 @@ function TodoList() {
   }, [taskList]);
 
   const addTask = () => {
-    if (!enterTask || !selectIcon) {
-      createNotification("error", "Please select both icon and text.");
-      return;
-    } else if (enterTask && selectIcon) {
+    if (enterTask && selectIcon) {
       const newTask = {
         id: Date.now(),
         title: enterTask,
         icon: selectIcon ? selectIcon.image : null,
         completed: false, // add a 'completed' property to the new task
+        createdAt: moment().format("MMMM Do YYYY, h:mm a"), // add a createdAt property with the current date and time
       };
+
       setTaskList([...taskList, newTask]);
       setenterTaskName("");
       setselectIcon(null);
+      createNotification("success", "Task added.");
     }
   };
   console.log("enterTask---", enterTask);
@@ -74,6 +77,13 @@ function TodoList() {
 
   const showSelectedIcon = (icon) => {
     setselectIcon(icon);
+    setIsModalOpen(false);
+    if (!enterTask) {
+      createNotification("error", "Please enter a task.");
+      return;
+    } else {
+      addTask();
+    }
   };
   console.log("selectIcon===", selectIcon);
 
@@ -93,7 +103,7 @@ function TodoList() {
           className="p-3"
           style={{ color: "#013456", fontWeight: 700, fontSize: "35px" }}
         >
-          To-Do List App
+          <FcInspection /> To Do
         </h3>
       </div>
       <hr />
@@ -101,31 +111,36 @@ function TodoList() {
         <Greeting />
         <div className="row">
           <div className="col-md-6">
-            <div
-              className="add-todo d-flex"
-              style={{ marginTop: "4.6rem", alignItems: "center" }}
-            >
-              <div className="m-3">
+            <div className="add-todo">
+              <div className="m-3 ">
                 <input
                   className="text-box"
                   placeholder="What do you need to do today?"
                   value={enterTask}
-                  onChange={(e) => setenterTaskName(e.target.value)}
+                  onChange={(e) => {
+                    setenterTaskName(e.target.value);
+                  }}
                 />
               </div>{" "}
-              <div style={{ marginLeft: "110px" }}>
-                <button className="add_btn" title="Add" onClick={addTask}>
+              <div className="button-style">
+                <button
+                  className="add_btn"
+                  title="Add"
+                  onClick={() => {
+                    !selectIcon ? handleModalOpen() : addTask();
+                  }}
+                >
                   Add
                 </button>
               </div>
             </div>
-            <div className="ms-3">
+            <div className="add-icon">
               {/* <OverlayTrigger
             placement="right"
             delay={{ show: 150, hide: 400 }}
             overlay={renderTooltip}
           > */}
-              <span>
+              {/* <span>
                 {" "}
                 <i
                   title="Add Icon's"
@@ -133,7 +148,7 @@ function TodoList() {
                   style={{ cursor: "pointer" }}
                   onClick={handleModalOpen}
                 ></i>
-              </span>
+              </span> */}
               {selectIcon && (
                 <span>
                   <img
@@ -152,7 +167,7 @@ function TodoList() {
                 <PopupWindow onClose={handleModalClose}>
                   <div className="row">
                     {icons.map((data) => (
-                      <div className="col-md-2 p-1">
+                      <div className="col-2 p-1">
                         <img
                           className="icon1"
                           src={data.image}
@@ -166,6 +181,8 @@ function TodoList() {
                 </PopupWindow>
               )}
             </div>
+          </div>
+          <div className="col-md-6 clm-top">
             <div className="filter-type">
               <label htmlFor="filter">Filter by:</label>{" "}
               <select
@@ -188,7 +205,7 @@ function TodoList() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTasks.map((task, index) => (
+                  {filteredTasks.reverse().map((task, index) => (
                     <tr key={index}>
                       <td>
                         <input
@@ -199,8 +216,18 @@ function TodoList() {
                         />
                       </td>
                       <td>
-                        <img src={task?.icon} alt="" style={{ width: "10%" }} />{" "}
-                        {task?.title}
+                        <img src={task?.icon} alt="" className="table-image" />{" "}
+                        <span>{task.title}</span>
+                        <p
+                          className="ms-4"
+                          style={{
+                            fontSize: "10px",
+                            color: "black",
+                          }}
+                        >
+                          <i>{task.createdAt}</i>
+                        </p>{" "}
+                        {/* display the relative timestamp */}
                       </td>
                       <td style={{ textAlign: "center" }}>
                         <FcEmptyTrash
