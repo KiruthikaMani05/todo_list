@@ -6,12 +6,12 @@ import { icons } from "./Icon_pkg";
 import { FcEmptyTrash, FcInspection } from "react-icons/fc";
 import createNotification from "./reactNotification";
 import moment from "moment/moment";
-// import Dictaphone from "./Dictaphone"; 
+// import Dictaphone from "./Dictaphone";
 
 function TodoList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectIcon, setselectIcon] = useState(null);
-  const [enterTask, setenterTaskName] = useState("");
+  const [enterTask, setEnterTaskName] = useState("");
   const [filter, setFilter] = useState("All"); // initialize filter state to "All"
 
   const [taskList, setTaskList] = useState(
@@ -24,8 +24,24 @@ function TodoList() {
     localStorage.setItem("taskList", JSON.stringify(taskList));
   }, [taskList]);
 
+  // const addTask = () => {
+  //   if (enterTask && selectIcon) {
+  //     const newTask = {
+  //       id: Date.now(),
+  //       title: enterTask,
+  //       icon: selectIcon ? selectIcon.image : null,
+  //       completed: false, // add a 'completed' property to the new task
+  //       createdAt: moment().format("MMMM Do YYYY, h:mm a"), // add a createdAt property with the current date and time
+  //     };
+
+  //     setTaskList([...taskList, newTask]);
+  //     setEnterTaskName("");
+  //     setselectIcon(null);
+  //     createNotification("success", "Task added.");
+  //   }
+  // };
   const addTask = () => {
-    if (enterTask && selectIcon) {
+    if (enterTask) {
       const newTask = {
         id: Date.now(),
         title: enterTask,
@@ -35,16 +51,17 @@ function TodoList() {
       };
 
       setTaskList([...taskList, newTask]);
-      setenterTaskName("");
+      setEnterTaskName("");
       setselectIcon(null);
       createNotification("success", "Task added.");
     }
   };
-  console.log("enterTask---", enterTask);
+  // console.log("enterTask---", addTask);
 
   const deleteTask = (index) => {
+    const originalIndex = taskList.length - 1 - index; // Calculate the original index
     const newTaskList = [...taskList];
-    newTaskList.splice(index, 1);
+    newTaskList.splice(originalIndex, 1);
     setTaskList(newTaskList);
   };
 
@@ -75,29 +92,29 @@ function TodoList() {
     setFilter(e.target.value); // update filter state when the select box changes
   };
 
-  const showSelectedIcon = (icon) => {
-    setselectIcon(icon);
-    setIsModalOpen(false);
-    if (!enterTask) {
-      createNotification("error", "Please enter a task.");
-      return;
-    } else {
-      addTask();
-    }
-  };
-  console.log("selectIcon===", selectIcon);
+  // const showSelectedIcon = (icon) => {
+  //   setselectIcon(icon);
+  //   setIsModalOpen(false);
+  //   if (!enterTask) {
+  //     createNotification("error", "Please enter a task.");
+  //     return;
+  //   } else {
+  //     addTask();
+  //   }
+  // };
+  // console.log("selectIcon===", selectIcon);
 
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
+  // const handleModalOpen = () => {
+  //   setIsModalOpen(true);
+  // };
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+  // const handleModalClose = () => {
+  //   setIsModalOpen(false);
+  // };
 
-  console.log("taskList=====>", taskList);
+  // console.log("taskList=====>", taskList);
   return (
-    <div style={{ backgroundColor: "beige" }}>
+    <div style={{ backgroundColor: "beige", height: "100vh", width: "100vw" }}>
       <div className="head">
         <h3
           className="p-3"
@@ -108,17 +125,17 @@ function TodoList() {
       </div>
       <hr />
       <div className="container">
-        <Greeting />
         <div className="row">
           <div className="col-md-6">
+            <Greeting />
             <div className="add-todo">
-              <div className="m-3 ">
+              <div className="m-3">
                 <input
                   className="text-box"
                   placeholder="What do you need to do today?"
                   value={enterTask}
                   onChange={(e) => {
-                    setenterTaskName(e.target.value);
+                    setEnterTaskName(e.target.value);
                   }}
                 />
               </div>{" "}
@@ -126,9 +143,10 @@ function TodoList() {
                 <button
                   className="add_btn"
                   title="Add"
-                  onClick={() => {
-                    !selectIcon ? handleModalOpen() : addTask();
-                  }}
+                  // onClick={() => {
+                  //   !selectIcon ? handleModalOpen() : addTask();
+                  // }}
+                  onClick={() => addTask()}
                 >
                   Add
                 </button>
@@ -149,7 +167,7 @@ function TodoList() {
                   onClick={handleModalOpen}
                 ></i>
               </span> */}
-              {selectIcon && (
+              {/* {selectIcon && (
                 <span>
                   <img
                     className="icon0"
@@ -158,11 +176,11 @@ function TodoList() {
                     title={selectIcon.name}
                   />
                 </span>
-              )}
+              )} */}
 
               {/* </OverlayTrigger> */}
             </div>
-            <div className="model-popup m-3">
+            {/* <div className="model-popup m-3">
               {isModalOpen && (
                 <PopupWindow onClose={handleModalClose}>
                   <div className="row">
@@ -180,7 +198,7 @@ function TodoList() {
                   </div>
                 </PopupWindow>
               )}
-            </div>
+            </div> */}
           </div>
           <div className="col-md-6 clm-top">
             <div className="filter-type">
@@ -210,19 +228,19 @@ function TodoList() {
                       <td>
                         <input
                           type="checkbox"
-                          class="larger-checkbox"
+                          class="larger-checkbox ms-3"
                           checked={task.completed} // determine whether the checkbox should be checked
                           onChange={() => completeTask(task.id)} // call the completeTask function when the checkbox is changed
                         />
                       </td>
                       <td>
-                        <img src={task?.icon} alt="" className="table-image" />{" "}
+                        {/* <img src={task?.icon} alt="" className="table-image" />{" "} */}
                         <span>{task.title}</span>
                         <p
-                          className="ms-4"
+                          className="mt-1"
                           style={{
                             fontSize: "10px",
-                            color: "black",
+                            color: "#fad405",
                           }}
                         >
                           <i>{task.createdAt}</i>

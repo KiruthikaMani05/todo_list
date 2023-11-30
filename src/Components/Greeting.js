@@ -5,7 +5,7 @@ function Greeting() {
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
-    const currentHour = new Date().getHours();
+    const currentHour = new Date().getUTCHours();
     if (currentHour >= 5 && currentHour < 12) {
       setTimeOfDay("Morning");
       setImageUrl("/img/holding-a-paper-cup.jpg");
@@ -20,7 +20,7 @@ function Greeting() {
       setImageUrl("/img/sleeping-dog.jpg");
     }
   }, []);
-
+  console.log("getting current day", timeOfDay);
   return (
     <div className="text-animations">
       <div>
@@ -28,12 +28,12 @@ function Greeting() {
           <img className="greeting-img" src={imageUrl} alt={timeOfDay} />
         )}
       </div>
-      <div class="waveTextAnimated">
+      {/* <div class="waveTextAnimated">
         Good {timeOfDay}
         <span>.</span>
         <span>.</span>
         <span>.</span>
-      </div>
+      </div> */}
     </div>
   );
 }
